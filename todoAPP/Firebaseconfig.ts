@@ -4,6 +4,10 @@ import { getFirestore } from "firebase/firestore";  // * AGREGADO
 
 import { getAuth } from "firebase/auth"; // ← NUEVO 
 
+
+
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 

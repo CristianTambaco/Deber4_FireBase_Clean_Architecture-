@@ -13,12 +13,24 @@ import {
   View,
 } from "react-native";
  
+
+
+import { useAuth } from "@/src/presentation/hooks/useAuth"; 
+import { useRouter } from "expo-router"; 
+
+
+
 // 🟢 BENEFICIO: Este componente NO SABE si usamos SQLite, Firebase, o una API
 // Solo sabe que puede llamar a addTodo, toggleTodo, deleteTodo
  
 export default function TodosScreenClean() {
   const [inputText, setInputText] = useState("");
   const { todos, loading, addTodo, toggleTodo, deleteTodo } = useTodos();
+
+
+  // ← NUEVAS LÍNEAS   
+  const { user, logout } = useAuth();   
+  const router = useRouter(); 
  
   // 🎨 Detectar tema y crear estilos dinámicamente
   const colorScheme = useColorScheme();
@@ -35,6 +47,17 @@ export default function TodosScreenClean() {
       setInputText("");
     }
   };
+
+
+  // ← NUEVA FUNCIÓN   
+  const handleLogout = async () => {     
+    const success = await logout();     
+    if (success) {       
+      router.replace("/(tabs)/login");     
+    }   
+  };
+
+
  
   if (loading) {
     return (
@@ -75,8 +98,23 @@ export default function TodosScreenClean() {
   );
  
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Mis Tareas (Clean)</Text>
+    <View style={styles.container}> 
+
+      {/* NUEVO HEADER CON INFO DE USUARIO */} 
+      <View style={styles.header}> 
+        <View style={styles.userAvatarPlaceholder}> 
+          <Text style={styles.userAvatarText}> 
+            {user?.displayName?.charAt(0) || "U"} 
+          </Text> 
+        </View> 
+        <Text style={styles.userName}>{user?.displayName || "Usuario"}</Text> 
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}> 
+          <Text style={styles.logoutText}>Salir</Text> 
+        </TouchableOpacity> 
+      </View> 
+      
+      {/* <Text style={styles.title}>Mis Tareas (Clean)</Text> */}
+      <Text style={styles.title}>Mis Tareas</Text>
  
       <View style={styles.inputContainer}>
         <TextInput
@@ -106,3 +144,6 @@ export default function TodosScreenClean() {
     </View>
   );
 }
+
+
+

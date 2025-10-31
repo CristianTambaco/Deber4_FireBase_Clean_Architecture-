@@ -128,6 +128,53 @@ export const createStyles = (theme: TodosTheme) =>
       marginTop: 10,
       fontSize: 14,
     },
+
+    // Agregar al objeto de estilos existente: 
+    header: {   
+      flexDirection: "row",   
+      alignItems: "center",   
+      padding: 15,   
+      backgroundColor: "#007AFF",   
+      marginBottom: 10, 
+    }, 
+
+    userAvatarPlaceholder: {   
+      width: 40,   
+      height: 40,   
+      borderRadius: 20,   
+      marginRight: 10,   
+      backgroundColor: "#0055CC",   
+      justifyContent: "center",   
+      alignItems: "center",   
+      borderWidth: 2,   
+      borderColor: "#fff", 
+    }, 
+
+    userAvatarText: {   
+      color: "#fff",   
+      fontSize: 18,   
+      fontWeight: "bold", 
+    }, 
+
+    userName: {   
+      flex: 1,   
+      color: "#fff",   
+      fontSize: 16,   
+      fontWeight: "bold", 
+    }, 
+
+    logoutButton: {   
+      padding: 10,   
+      backgroundColor: "#0055CC",   
+      borderRadius: 8, 
+    }, 
+
+    logoutText: {   
+      color: "#fff",   
+      fontWeight: "bold", 
+    }, 
+
+
   });
  
 /**

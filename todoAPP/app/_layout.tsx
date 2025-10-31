@@ -1,97 +1,85 @@
+import {   
+  DarkTheme, 
+  DefaultTheme, 
+  ThemeProvider, 
+} from "@react-navigation/native"; 
 
-import {
+import { useFonts } from "expo-font"; 
+import { Stack, useRouter, useSegments } from "expo-router"; 
+import * as SplashScreen from "expo-splash-screen"; 
+import { useEffect, useState } from "react"; 
+import { ActivityIndicator, View } from "react-native"; 
+import "react-native-reanimated";  
 
-  DarkTheme,
+import { useColorScheme } from "@/hooks/use-color-scheme"; 
+import { container } from "@/src/di/container"; 
+import { useAuth } from "@/src/presentation/hooks/useAuth"; // ← NUEVO  
 
-  DefaultTheme,
+SplashScreen.preventAutoHideAsync(); 
 
-  ThemeProvider,
+export default function RootLayout() {   
+  const colorScheme = useColorScheme();   
 
-} from "@react-navigation/native";
+  const [loaded] = useFonts({ 
+    SpaceMono: require("@/assets/fonts/SpaceMono-BoldItalic.ttf"), 
+  });    
 
-import { useFonts } from "expo-font";
+  const [containerReady, setContainerReady] = useState(false);   
+  const { user, loading: authLoading } = useAuth(); // ← NUEVO   
+  const segments = useSegments(); // ← NUEVO 
+  const router = useRouter(); // ← NUEVO 
 
-import { Stack } from "expo-router";
+  useEffect(() => {     
+    const initContainer = async () => {       
+      try {         
+        await container.initialize();         
+        setContainerReady(true);       
+      } catch (error) {         
+        console.error("Error initializing container:", error); 
+      } 
+    };      
 
-import * as SplashScreen from "expo-splash-screen";
+    initContainer(); 
+  }, []); 
 
-import { useEffect, useState } from "react";
+  // ← NUEVO: Protección de rutas   
+  useEffect(() => {     
+    if (!containerReady || authLoading) return; 
 
-import { ActivityIndicator, View } from "react-native";
+    const inAuthGroup = 
+      segments[0] === "(tabs)" && 
+      (segments[1] === "login" || segments[1] === "register"); 
 
-import "react-native-reanimated";
- 
-import { useColorScheme } from "@/hooks/use-color-scheme";
+    if (!user && !inAuthGroup) { 
+      // Usuario no autenticado intenta acceder a ruta protegida       
+      router.replace("/(tabs)/login"); 
+    } else if (user && inAuthGroup) { 
+      // Usuario autenticado intenta acceder a login/register       
+      router.replace("/(tabs)/todos"); 
+    } 
+  }, [user, segments, containerReady, authLoading]); 
 
-import { container } from "@/src/di/container"; // 🟢 Importar el container
- 
-SplashScreen.preventAutoHideAsync();
- 
-export default function RootLayout() {
+  useEffect(() => { 
+    if (loaded && containerReady && !authLoading) { 
+      SplashScreen.hideAsync(); 
+    } 
+  }, [loaded, containerReady, authLoading]); 
 
-  const colorScheme = useColorScheme();
+  if (!loaded || !containerReady || authLoading) {     
+    return ( 
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}> 
+        <ActivityIndicator size="large" /> 
+      </View> 
+    ); 
+  }    
 
-  const [loaded] = useFonts({
-
-    SpaceMono: require("@/assets/fonts/SpaceMono-BoldItalic.ttf"),
-
-  });
- 
-  // 🟢 Inicializar el container
-
-  const [containerReady, setContainerReady] = useState(false);
- 
-  useEffect(() => {
-
-    const initContainer = async () => {
-
-      try {
-
-        await container.initialize();
-
-        setContainerReady(true);
-
-      } catch (error) {
-
-        console.error("Error initializing container:", error);
-
-      }
-
-    };
- 
-    initContainer();
-
-  }, []);
- 
-  useEffect(() => {
-
-    if (loaded && containerReady) {
-
-      SplashScreen.hideAsync();
-
-    }
-
-  }, [loaded, containerReady]);
- 
-  if (!loaded || !containerReady) {
-
-    return (
-<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-<ActivityIndicator size="large" />
-</View>
-
-    );
-
-  }
- 
-  return (
-<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-<Stack screenOptions={{ headerShown: false }}>
-<Stack.Screen name="(tabs)/todos" />
-</Stack>
-</ThemeProvider>
-
-  );
-
-}
- 
+  return ( 
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}> 
+      <Stack screenOptions={{ headerShown: false }}> 
+        <Stack.Screen name="(tabs)/login" /> 
+        <Stack.Screen name="(tabs)/register" /> 
+        <Stack.Screen name="(tabs)/todos" /> 
+      </Stack> 
+    </ThemeProvider> 
+  ); 
+} 
