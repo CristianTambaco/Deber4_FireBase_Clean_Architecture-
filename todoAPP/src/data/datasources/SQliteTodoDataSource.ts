@@ -2,7 +2,7 @@
 // Es la única clase que conoce sobre SQLite
  
 import * as SQLite from 'expo-sqlite';
-import { Todo } from '@/src/domain/entities/todo';
+import { Todo } from '@/src/domain/entities/Todo';
  
 export class SQLiteTodoDataSource {
   private db: SQLite.SQLiteDatabase | null = null;

@@ -1,4 +1,4 @@
-import { CreateTodoDTO, Todo, UpdateTodoDTO } from "@/src/domain/entities/todo";
+import { CreateTodoDTO, Todo, UpdateTodoDTO } from "@/src/domain/entities/Todo";
 import { TodoRepository } from "@/src/domain/repositories/TodoRepository";
 import { SQLiteTodoDataSource } from "../datasources/SQliteTodoDataSource";
 

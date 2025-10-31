@@ -1,15 +1,27 @@
-import { Todo,CreateTodoDTO } from "../entities/todo";
-import { TodoRepository } from "../repositories/TodoRepository";
+import { Todo, CreateTodoDTO } from "../entities/Todo"; 
+import { TodoRepository } from "../repositories/TodoRepository"; 
 
-export class CreateTodo {
-    constructor(private todoRepository: TodoRepository) {}
-    async execute(data: CreateTodoDTO): Promise<Todo> {
-        if (!data.title.trim()) {
-            throw new Error("Titulo es requerido");
-        }
-        if (data.title.length > 200) {
-            throw new Error("Titulo demasiado largo");
-        }           
-        return await this.todoRepository.create(data);
-    }
-}
+
+export class CreateTodo {   
+    constructor(private repository: TodoRepository) {} 
+
+
+    async execute(data: CreateTodoDTO): Promise<Todo> { 
+    // 🟢 Validaciones de negocio     
+        if (!data.title.trim()) {       
+            throw new Error("El título no puede estar vacío"); 
+        }      
+        
+        if (data.title.length > 200) {       
+            throw new Error("El título es demasiado largo"); 
+        } 
+ 
+    // ← NUEVO: Validar que userId esté presente     
+        if (!data.userId) {       
+            throw new Error("User ID is required"); 
+        }      
+        
+        
+        return await this.repository.create(data); 
+    } 
+} 

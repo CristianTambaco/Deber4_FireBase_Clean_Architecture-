@@ -7,12 +7,52 @@ import { GetAllTodos } from '@/src/domain/usecases/getAllTodos';
 import { CreateTodo } from '@/src/domain/usecases/createtodo';
 import { ToggleTodo } from '@/src/domain/usecases/ToggleTodo';
 import { DeleteTodo } from '@/src/domain/usecases/deleteTodo';
+
+
+
+// ===== IMPORTS EXISTENTES DE TODOS ===== 
+// (Mantén todos los imports que ya existen) 
+
+// ===== NUEVOS IMPORTS DE AUTH ===== (Agregar al inicio)
+import { FirebaseAuthDataSource } from "../data/datasources/FirebaseAuthDataSource";
+import { AuthRepositoryImpl } from "../data/repositories/AuthRepositoryImpl";
+import { RegisterUser } from "../domain/usecases/RegisterUser";
+import { LoginUser } from "../domain/usecases/LoginUser";
+import { LogoutUser } from "../domain/usecases/LogoutUser";
+import { GetCurrentUser } from "../domain/usecases/GetCurrentUser";
+import { AuthRepository } from "../domain/repositories/AuthRepository";
+
+// ... resto de imports existentes ... 
+
+
+
  
 // 🟢 Singleton para mantener una sola instancia
 class DIContainer {
   private static instance: DIContainer;
   private _dataSource: FirebaseTodoDataSource | null = null;
   private _repository: TodoRepositoryFirebaseImpl | null = null;
+
+
+
+  // ===== EXISTENTES DE TODOS ===== (NO BORRAR)  
+  // ... mantén todas las propiedades existentes ...
+
+  // ===== NUEVOS DE AUTH ===== (AGREGAR)
+  private _authDataSource?: FirebaseAuthDataSource;
+  private _authRepository?: AuthRepository;
+  private _registerUser?: RegisterUser;
+  private _loginUser?: LoginUser;
+  private _logoutUser?: LogoutUser;
+  private _getCurrentUser?: GetCurrentUser;
+
+  // ... método initialize existente (NO BORRAR) ...
+
+  // ===== GETTERS EXISTENTES DE TODOS ===== (NO BORRAR) 
+  // ... mantén todos los getters existentes ...
+
+
+
  
   private constructor() {}
  
@@ -50,6 +90,54 @@ class DIContainer {
     if (!this._repository) throw new Error('Container not initialized');
     return new DeleteTodo(this._repository);
   }
+
+
+
+
+
+   // ===== NUEVOS GETTERS DE AUTH ===== (AGREGAR)
+  get authDataSource(): FirebaseAuthDataSource {
+    if (!this._authDataSource) {
+      this._authDataSource = new FirebaseAuthDataSource();
+    }
+    return this._authDataSource;
+  }
+
+  get authRepository(): AuthRepository {
+    if (!this._authRepository) {
+      this._authRepository = new AuthRepositoryImpl(this.authDataSource);
+    }
+    return this._authRepository;
+  }
+
+  get registerUser(): RegisterUser {
+    if (!this._registerUser) {
+      this._registerUser = new RegisterUser(this.authRepository);
+    }
+    return this._registerUser;
+  }
+
+  get loginUser(): LoginUser {
+    if (!this._loginUser) {
+      this._loginUser = new LoginUser(this.authRepository);
+    }
+    return this._loginUser;
+  }
+
+  get logoutUser(): LogoutUser {
+    if (!this._logoutUser) {
+      this._logoutUser = new LogoutUser(this.authRepository);
+    }
+    return this._logoutUser;
+  }
+
+  get getCurrentUser(): GetCurrentUser {
+    if (!this._getCurrentUser) {
+      this._getCurrentUser = new GetCurrentUser(this.authRepository);
+    }
+    return this._getCurrentUser;
+  }
 }
+
  
 export const container = DIContainer.getInstance();
