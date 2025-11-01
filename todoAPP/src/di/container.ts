@@ -8,6 +8,8 @@ import { CreateTodo } from '@/src/domain/usecases/createtodo';
 import { ToggleTodo } from '@/src/domain/usecases/ToggleTodo';
 import { DeleteTodo } from '@/src/domain/usecases/deleteTodo';
 
+import { UpdateUserProfile } from "../domain/usecases/UpdateUserProfile";
+
 
 
 // ===== IMPORTS EXISTENTES DE TODOS ===== 
@@ -45,6 +47,16 @@ class DIContainer {
   private _loginUser?: LoginUser;
   private _logoutUser?: LogoutUser;
   private _getCurrentUser?: GetCurrentUser;
+
+
+  private _updateUserProfile?: UpdateUserProfile;
+
+   get updateUserProfile(): UpdateUserProfile {
+    if (!this._updateUserProfile) {
+      this._updateUserProfile = new UpdateUserProfile(this.authRepository);
+    }
+    return this._updateUserProfile;
+  }
 
   // ... método initialize existente (NO BORRAR) ...
 
@@ -93,8 +105,6 @@ class DIContainer {
 
 
 
-
-
    // ===== NUEVOS GETTERS DE AUTH ===== (AGREGAR)
   get authDataSource(): FirebaseAuthDataSource {
     if (!this._authDataSource) {
@@ -137,6 +147,11 @@ class DIContainer {
     }
     return this._getCurrentUser;
   }
+
+
+ 
+
+
 }
 
  

@@ -6,7 +6,7 @@ import {
     updateProfile,   
     User as FirebaseUser, 
 } from "firebase/auth"; 
-import { doc, setDoc, getDoc } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"; 
 import { auth, db } from "@/FirebaseConfig"; 
 import { User } from "@/src/domain/entities/User"; 
 
@@ -55,19 +55,23 @@ export class FirebaseAuthDataSource {
             createdAt: new Date(), 
         }; 
 
-    } catch (error: any) {       
-        console.error("Error registering user:", error); 
- 
-      // Mensajes de error más amigables       
-        if (error.code === "auth/email-already-in-use") {         
-            throw new Error("Este email ya está registrado");       
-        } else if (error.code === "auth/invalid-email") {         
-            throw new Error("Email inválido"); 
-        } else if (error.code === "auth/weak-password") {         
-            throw new Error("La contraseña es muy débil"); 
-        }        
-        throw new Error(error.message || "Error al registrar usuario"); 
-    } 
+    } catch (error: any) {
+    // Solo loguear si NO es un error esperado
+    if (error.code !== "auth/email-already-in-use" && 
+        error.code !== "auth/invalid-email" && 
+        error.code !== "auth/weak-password") {
+        console.log("Unexpected error registering user:", error);
+    }
+
+    if (error.code === "auth/email-already-in-use") {
+        throw new Error("Este email ya está registrado");
+    } else if (error.code === "auth/invalid-email") {
+        throw new Error("Email inválido");
+    } else if (error.code === "auth/weak-password") {
+        throw new Error("La contraseña es muy débil");
+    }
+    throw new Error(error.message || "Error al registrar usuario");
+    }
   } 
  
   // ===== LOGIN =====   
@@ -117,6 +121,36 @@ export class FirebaseAuthDataSource {
         throw new Error(error.message || "Error al cerrar sesión");     
         } 
     } 
+
+
+
+    // actualizacion
+    async updateProfile(displayName: string): Promise<User> {
+    const firebaseUser = auth.currentUser;
+    if (!firebaseUser) {
+        throw new Error("No user is currently authenticated");
+    }
+
+    // 1. Actualizar en Firebase Auth
+    await updateProfile(firebaseUser, { displayName });
+    
+
+    // 2. Actualizar en Firestore
+    const userRef = doc(db, "users", firebaseUser.uid);
+    await updateDoc(userRef, { displayName });
+
+    // 3. Devolver usuario actualizado
+    return {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || "",
+        displayName,
+        createdAt: new Date(firebaseUser.metadata.creationTime || Date.now()),
+    };
+    }
+
+
+    
+
  
   // ===== OBTENER USUARIO ACTUAL =====   
     async getCurrentUser(): Promise<User | null> {     
@@ -142,4 +176,11 @@ export class FirebaseAuthDataSource {
             } 
         }); 
     } 
+
+
+
+    
+
+
+
 } 

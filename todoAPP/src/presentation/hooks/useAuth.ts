@@ -7,6 +7,25 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
+  // 
+  const updateProfile = async (displayName: string): Promise<boolean> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const updatedUser = await container.updateUserProfile.execute(displayName);
+      setUser(updatedUser); // ← ¡Actualiza el estado local!
+      return true;
+    } catch (err: any) {
+      setError(err.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
   // Observar cambios de autenticación
   useEffect(() => {
     const unsubscribe = container.authRepository.onAuthStateChanged((authUser) => {
@@ -71,6 +90,11 @@ export const useAuth = () => {
     }
   };
 
+
+  
+
+
+
   return {
     user,
     loading,
@@ -78,6 +102,7 @@ export const useAuth = () => {
     register,
     login,
     logout,
+    updateProfile, // 
     isAuthenticated: !!user,
   };
 };

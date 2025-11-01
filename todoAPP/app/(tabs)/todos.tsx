@@ -107,11 +107,22 @@ export default function TodosScreenClean() {
             {user?.displayName?.charAt(0) || "U"} 
           </Text> 
         </View> 
-        <Text style={styles.userName}>{user?.displayName || "Usuario"}</Text> 
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}> 
-          <Text style={styles.logoutText}>Salir</Text> 
-        </TouchableOpacity> 
-      </View> 
+        <Text style={styles.userName}>{user?.displayName || "Usuario"}</Text>
+
+
+        {/* Botón para ir al perfil */}
+        <TouchableOpacity
+          onPress={() => router.push("/(tabs)/profile")}
+          style={[styles.logoutButton, { backgroundColor: "#FF9500" }]}
+        >
+          <Text style={styles.logoutText}>Perfil</Text>
+        </TouchableOpacity>
+
+        {/* Botón de salir */}
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Text style={styles.logoutText}>Salir</Text>
+        </TouchableOpacity>
+      </View>
       
       {/* <Text style={styles.title}>Mis Tareas (Clean)</Text> */}
       <Text style={styles.title}>Mis Tareas</Text>
