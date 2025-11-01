@@ -18,6 +18,8 @@ import {
 import { useAuth } from "@/src/presentation/hooks/useAuth"; 
 import { useRouter } from "expo-router"; 
 
+import { Alert } from "react-native";
+
 
 
 // 🟢 BENEFICIO: Este componente NO SABE si usamos SQLite, Firebase, o una API
@@ -71,31 +73,44 @@ export default function TodosScreenClean() {
     );
   }
  
-  const renderTodo = ({ item }: { item: any }) => (
-    <View style={styles.todoItem}>
-      <TouchableOpacity
-        style={styles.todoContent}
-        onPress={() => toggleTodo(item.id)}
-      >
-        <View
-          style={[styles.checkbox, item.completed && styles.checkboxChecked]}
+  const renderTodo = ({ item }: { item: any }) => {
+    const confirmDelete = () => {
+      Alert.alert(
+        "Confirmar",
+        "¿Estás seguro de que deseas eliminar esta tarea?",
+        [
+          { text: "Cancelar", style: "cancel" },
+          { text: "Eliminar", onPress: () => deleteTodo(item.id) },
+        ]
+      );
+    };
+
+    return (
+      <View style={styles.todoItem}>
+        <TouchableOpacity
+          style={styles.todoContent}
+          onPress={() => toggleTodo(item.id)}
         >
-          {item.completed && <Text style={styles.checkmark}>✓</Text>}
-        </View>
-        <Text
-          style={[styles.todoText, item.completed && styles.todoTextCompleted]}
+          <View
+            style={[styles.checkbox, item.completed && styles.checkboxChecked]}
+          >
+            {item.completed && <Text style={styles.checkmark}>✓</Text>}
+          </View>
+          <Text
+            style={[styles.todoText, item.completed && styles.todoTextCompleted]}
+          >
+            {item.title}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={confirmDelete} // ← Cambiado: llama a confirmDelete
+          style={styles.deleteButton}
         >
-          {item.title}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => deleteTodo(item.id)}
-        style={styles.deleteButton}
-      >
-        <Text style={styles.deleteButtonText}>🗑️</Text>
-      </TouchableOpacity>
-    </View>
-  );
+          <Text style={styles.deleteButtonText}>🗑️</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
  
   return (
     <View style={styles.container}> 
