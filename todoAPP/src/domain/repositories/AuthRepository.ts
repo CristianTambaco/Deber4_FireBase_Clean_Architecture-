@@ -25,4 +25,8 @@ export interface AuthRepository {
   updateProfile(displayName: string): Promise<User>; // ← NUEVO
 
 
+  sendPasswordReset(email: string): Promise<void>;
+
+
+
 } 

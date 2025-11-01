@@ -91,6 +91,22 @@ export const useAuth = () => {
   };
 
 
+
+  const sendPasswordResetEmail = async (email: string): Promise<boolean> => {
+    try {
+      setLoading(true);
+      setError(null);
+      await container.sendPasswordResetEmail.execute(email);
+      return true;
+    } catch (err: any) {
+      setError(err.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   
 
 
@@ -103,6 +119,7 @@ export const useAuth = () => {
     login,
     logout,
     updateProfile, // 
+    sendPasswordResetEmail, // 
     isAuthenticated: !!user,
   };
 };

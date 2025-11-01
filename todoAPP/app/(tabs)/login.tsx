@@ -18,6 +18,8 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error } = useAuth();
+
+
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -76,11 +78,35 @@ export default function LoginScreen() {
             )}
           </TouchableOpacity>
 
+          
+          
+
+
+
+
           <TouchableOpacity onPress={goToRegister} style={styles.linkButton}>
             <Text style={styles.linkText}>
               ¿No tienes cuenta? <Text style={styles.linkTextBold}>Regístrate</Text>
             </Text>
           </TouchableOpacity>
+
+
+
+
+          <TouchableOpacity 
+            onPress={() => router.push("/(tabs)/forgot-password")} 
+            style={styles.linkButton}
+          >
+            <Text style={styles.linkText}>
+              ¿Olvidaste tu contraseña?
+            </Text>
+          </TouchableOpacity>
+
+
+          
+
+
+
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -149,4 +175,10 @@ const styles = StyleSheet.create({
     color: "#007AFF",
     fontWeight: "bold",
   },
+
+
+    
+
+
+
 });

@@ -10,6 +10,8 @@ import { DeleteTodo } from '@/src/domain/usecases/deleteTodo';
 
 import { UpdateUserProfile } from "../domain/usecases/UpdateUserProfile";
 
+import { SendPasswordResetEmail } from "../domain/usecases/SendPasswordResetEmail";
+
 
 
 // ===== IMPORTS EXISTENTES DE TODOS ===== 
@@ -57,6 +59,20 @@ class DIContainer {
     }
     return this._updateUserProfile;
   }
+
+
+
+  private _sendPasswordResetEmail?: SendPasswordResetEmail;
+
+  get sendPasswordResetEmail(): SendPasswordResetEmail {
+    if (!this._sendPasswordResetEmail) {
+      this._sendPasswordResetEmail = new SendPasswordResetEmail(this.authRepository);
+    }
+    return this._sendPasswordResetEmail;
+  }  
+
+
+
 
   // ... método initialize existente (NO BORRAR) ...
 

@@ -32,9 +32,19 @@ export class AuthRepositoryImpl implements AuthRepository {
   }
 
 
+  async sendPasswordReset(email: string): Promise<void> {
+    return this.dataSource.sendPasswordReset(email);
+  }
+
+
 
 
   onAuthStateChanged(callback: (user: User | null) => void): () => void {
     return this.dataSource.onAuthStateChanged(callback);
   }
+
+
+  
+
+
 }
