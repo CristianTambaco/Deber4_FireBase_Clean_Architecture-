@@ -58,15 +58,17 @@ export default function RootLayout() {
       segments[0] === "(tabs)" &&
       (segments[1] === "login" || segments[1] === "register");
 
+    // NUEVO: Agregar condición para pantallas públicas como forgot-password
+    const isPublicScreen =
+      segments[0] === "(tabs)" && segments[1] === "forgot-password";
+
     if (!user) {
-      if (!inAuthGroup) {
+      if (!inAuthGroup && !isPublicScreen) { // <-- Modificar esta condición
         router.replace("/(tabs)/login");
       }
       clearLastRoute(); // ← Limpiar si no hay usuario
     } else {
       if (inAuthGroup) {
-
-
         // Si está en login/register, redirigir a la última ruta o /todos
         getLastRoute().then(lastRoute => {
           if (lastRoute && lastRoute !== "/(tabs)/login" && lastRoute !== "/(tabs)/register") {
@@ -77,13 +79,14 @@ export default function RootLayout() {
             router.replace("/(tabs)/todos");
           }
         });
-
-
-
       }
       // Si ya está en una ruta protegida, no hacer nada
     }
   }, [user, segments, containerReady, authLoading]);
+
+
+
+
 
   useEffect(() => {
     if (loaded && containerReady && !authLoading) {

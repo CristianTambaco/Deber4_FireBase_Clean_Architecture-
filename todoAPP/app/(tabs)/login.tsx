@@ -93,8 +93,8 @@ export default function LoginScreen() {
 
 
 
-          <TouchableOpacity 
-            onPress={() => router.push("/(tabs)/forgot-password")} 
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/forgot-password")} // 
             style={styles.linkButton}
           >
             <Text style={styles.linkText}>

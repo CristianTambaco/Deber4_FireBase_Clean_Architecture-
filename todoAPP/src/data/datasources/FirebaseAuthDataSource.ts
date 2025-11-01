@@ -4,13 +4,17 @@ import {
     signOut,   
     onAuthStateChanged as firebaseOnAuthStateChanged,   
     updateProfile,   
-    User as FirebaseUser,    
-    sendPasswordResetEmail
+    User as FirebaseUser  
+    
 
 } from "firebase/auth"; 
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"; 
 import { auth, db } from "@/FirebaseConfig"; 
 import { User } from "@/src/domain/entities/User"; 
+
+import { sendPasswordResetEmail } from "firebase/auth"; // ← Importado
+
+
 
 
 export class FirebaseAuthDataSource {  
@@ -183,7 +187,7 @@ export class FirebaseAuthDataSource {
 
 
     async sendPasswordReset(email: string): Promise<void> {
-    await sendPasswordResetEmail(auth, email);
+        await sendPasswordResetEmail(auth, email);
     }
 
 
