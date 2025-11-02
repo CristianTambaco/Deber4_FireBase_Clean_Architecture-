@@ -7,15 +7,51 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Observar cambios de autenticación y cargar perfil inicial desde caché
+  useEffect(() => {
+    let isMounted = true; // Bandera para evitar setState si el componente se desmonta
 
-  // 
+    const initAuth = async () => {
+      try {
+        // 1. Intentar cargar perfil desde AsyncStorage como valor inicial
+        const cachedUser = await container.authDataSource.loadCachedUserProfile();
+        if (cachedUser && isMounted) {
+          setUser(cachedUser); // <-- Mostrar perfil caché inmediatamente
+        }
+
+        // 2. Suscribirse a cambios reales de autenticación
+        const unsubscribe = container.authRepository.onAuthStateChanged((authUser) => {
+          if (isMounted) {
+            setUser(authUser); // <-- Actualizar con el valor real de Firebase
+            setLoading(false);
+          }
+        });
+
+        // Devolver la función de desuscripción
+        return unsubscribe;
+      } catch (err) {
+        console.error("Error initializing auth in useAuth:", err);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initAuth();
+
+    // Cleanup: desuscribirse cuando el componente se desmonte
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const updateProfile = async (displayName: string): Promise<boolean> => {
     try {
       setLoading(true);
       setError(null);
       const updatedUser = await container.updateUserProfile.execute(displayName);
-      setUser(updatedUser); // ← ¡Actualiza el estado local!
-      return true;
+      // setUser(updatedUser); // El onAuthStateChanged debería actualizar el estado automáticamente
+      return true; // El estado se actualizará via onAuthStateChanged
     } catch (err: any) {
       setError(err.message);
       return false;
@@ -24,18 +60,8 @@ export const useAuth = () => {
     }
   };
 
-
-
-  // Observar cambios de autenticación
-  useEffect(() => {
-    const unsubscribe = container.authRepository.onAuthStateChanged((authUser) => {
-      setUser(authUser);
-      setLoading(false);
-    });
-
-    // Cleanup: desuscribirse cuando el componente se desmonte
-    return () => unsubscribe();
-  }, []);
+  // ... resto de las funciones (register, login, logout, sendPasswordResetEmail) ...
+  // (El código de estas funciones no cambia, pero ahora usarán los métodos actualizados del DataSource)
 
   const register = async (
     email: string,
@@ -50,7 +76,7 @@ export const useAuth = () => {
         password,
         displayName
       );
-      setUser(newUser);
+      // setUser(newUser); // onAuthStateChanged debería manejarlo
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -65,7 +91,7 @@ export const useAuth = () => {
       setLoading(true);
       setError(null);
       const loggedUser = await container.loginUser.execute(email, password);
-      setUser(loggedUser);
+      // setUser(loggedUser); // onAuthStateChanged debería manejarlo
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -80,7 +106,7 @@ export const useAuth = () => {
       setLoading(true);
       setError(null);
       await container.logoutUser.execute();
-      setUser(null);
+      // setUser(null); // onAuthStateChanged debería manejarlo
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -89,8 +115,6 @@ export const useAuth = () => {
       setLoading(false);
     }
   };
-
-
 
   const sendPasswordResetEmail = async (email: string): Promise<boolean> => {
     try {
@@ -106,11 +130,6 @@ export const useAuth = () => {
     }
   };
 
-
-  
-
-
-
   return {
     user,
     loading,
@@ -118,8 +137,8 @@ export const useAuth = () => {
     register,
     login,
     logout,
-    updateProfile, // 
-    sendPasswordResetEmail, // 
+    updateProfile,
+    sendPasswordResetEmail,
     isAuthenticated: !!user,
   };
 };
