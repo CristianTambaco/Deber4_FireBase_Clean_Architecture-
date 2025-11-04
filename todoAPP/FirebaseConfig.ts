@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";  // * AGREGADO
 
-import { getAuth } from "firebase/auth"; // ← NUEVO 
+import { getAuth } from "firebase/auth"; // 
 
 
 
@@ -34,4 +34,4 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);  // * AGREGADO Y EXPORTADO
 
 
-export const auth = getAuth(app); // ← NUEVO: Autenticación 
+export const auth = getAuth(app); // Autenticación 

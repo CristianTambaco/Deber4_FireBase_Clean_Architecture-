@@ -4,16 +4,16 @@ import { container } from "@/src/di/container";
 import { Todo } from "@/src/domain/entities/Todo";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { useAuth } from "./useAuth"; // ← NUEVO: importar useAuth
+import { useAuth } from "./useAuth"; // importar useAuth
 
 export const useTodos = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth(); // ← NUEVO: obtener usuario actual
+  const { user } = useAuth(); //  obtener usuario actual
 
   const loadTodos = useCallback(async () => {
-    // ← NUEVO: solo cargar si hay usuario autenticado
+    //  solo cargar si hay usuario autenticado
     if (!user) {
       setTodos([]);
       setLoading(false);
@@ -23,7 +23,7 @@ export const useTodos = () => {
     try {
       setLoading(true);
       setError(null);
-      // ← MODIFICADO: pasar userId
+      // pasar userId
       const result = await container.getAllTodos.execute(user.id);
       setTodos(result);
     } catch (err) {
@@ -33,21 +33,21 @@ export const useTodos = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]); // ← MODIFICADO: agregar user como dependencia
+  }, [user]); // agregar user como dependencia
 
   useEffect(() => {
     loadTodos();
   }, [loadTodos]);
 
   const addTodo = async (title: string): Promise<boolean> => {
-    // ← NUEVO: validar que hay usuario
+    // validar que hay usuario
     if (!user) {
       Alert.alert("Error", "Debes estar autenticado para agregar tareas");
       return false;
     }
 
     try {
-      // ← MODIFICADO: incluir userId en CreateTodoDTO
+      // incluir userId en CreateTodoDTO
       const newTodo = await container.createTodo.execute({
         title,
         userId: user.id,

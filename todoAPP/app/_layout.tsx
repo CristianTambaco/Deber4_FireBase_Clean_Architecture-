@@ -29,9 +29,9 @@ export default function RootLayout() {
   const { user, loading: authLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const pathname = usePathname(); // ← NUEVO: ruta actual
+  const pathname = usePathname(); // 
 
-  // ← NUEVO: Guardar la ruta actual (excepto login/register)
+  // Guardar la ruta actual 
   useEffect(() => {
     if (!authLoading && user && pathname && !pathname.startsWith("/(tabs)/login") && !pathname.startsWith("/(tabs)/register")) {
       saveLastRoute(pathname);
@@ -50,7 +50,7 @@ export default function RootLayout() {
     initContainer();
   }, []);
 
-  // ← MODIFICADO: Restaurar última ruta
+  //  
   useEffect(() => {
     if (!containerReady || authLoading) return;
 
@@ -58,21 +58,21 @@ export default function RootLayout() {
       segments[0] === "(tabs)" &&
       (segments[1] === "login" || segments[1] === "register");
 
-    // NUEVO: Agregar condición para pantallas públicas como forgot-password
+    // Agregar condición para pantallas públicas como forgot-password
     const isPublicScreen =
       segments[0] === "(tabs)" && segments[1] === "forgot-password";
 
     if (!user) {
-      if (!inAuthGroup && !isPublicScreen) { // <-- Modificar esta condición
+      if (!inAuthGroup && !isPublicScreen) { // 
         router.replace("/(tabs)/login");
       }
-      clearLastRoute(); // ← Limpiar si no hay usuario
+      clearLastRoute(); // 
     } else {
       if (inAuthGroup) {
         // Si está en login/register, redirigir a la última ruta o /todos
         getLastRoute().then(lastRoute => {
           if (lastRoute && lastRoute !== "/(tabs)/login" && lastRoute !== "/(tabs)/register") {
-            // 🔁 Conversión explícita a RelativePathString
+            //  Conversión explícita a RelativePathString
             const typedRoute = lastRoute as unknown as RelativePathString;
             router.replace(typedRoute);
           } else {

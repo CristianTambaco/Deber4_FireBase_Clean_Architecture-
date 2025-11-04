@@ -39,7 +39,7 @@ export const useAuth = () => {
 
     initAuth();
 
-    // Cleanup: desuscribirse cuando el componente se desmonte
+   
     return () => {
       isMounted = false;
     };
@@ -60,8 +60,8 @@ export const useAuth = () => {
     }
   };
 
-  // ... resto de las funciones (register, login, logout, sendPasswordResetEmail) ...
-  // (El código de estas funciones no cambia, pero ahora usarán los métodos actualizados del DataSource)
+  // ... resto de las funciones register, login, logout, sendPasswordResetEmail ...
+ 
 
   const register = async (
     email: string,
@@ -76,7 +76,7 @@ export const useAuth = () => {
         password,
         displayName
       );
-      // setUser(newUser); // onAuthStateChanged debería manejarlo
+      // setUser(newUser); 
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -91,7 +91,7 @@ export const useAuth = () => {
       setLoading(true);
       setError(null);
       const loggedUser = await container.loginUser.execute(email, password);
-      // setUser(loggedUser); // onAuthStateChanged debería manejarlo
+      // setUser(loggedUser); 
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -106,7 +106,7 @@ export const useAuth = () => {
       setLoading(true);
       setError(null);
       await container.logoutUser.execute();
-      // setUser(null); // onAuthStateChanged debería manejarlo
+      // setUser(null); 
       return true;
     } catch (err: any) {
       setError(err.message);

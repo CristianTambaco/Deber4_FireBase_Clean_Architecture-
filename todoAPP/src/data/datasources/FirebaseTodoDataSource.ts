@@ -8,7 +8,7 @@ import {
   deleteDoc,   
   query,   
   orderBy, 
-  where, // ← NUEVO: para filtrar por userId 
+  where, // para filtrar por userId 
   Timestamp, 
 } from "firebase/firestore"; 
 import { db } from "@/FirebaseConfig"; 
@@ -22,11 +22,11 @@ export class FirebaseTodoDataSource {
   } 
   
  
-  // ← MODIFICADO: ahora filtra por userId   
+  // filtra por userId   
   async getAllTodos(userId: string): Promise<Todo[]> {     
     const q = query(       
       collection(db, this.collectionName),       
-      where("userId", "==", userId), // ← NUEVO: solo tareas del usuario       
+      where("userId", "==", userId), //  solo tareas del usuario       
       orderBy("createdAt", "desc") 
     );      
     
@@ -40,7 +40,7 @@ export class FirebaseTodoDataSource {
         title: data.title,         
         completed: data.completed,         
         createdAt: data.createdAt.toDate(),         
-        userId: data.userId, // ← NUEVO 
+        userId: data.userId, // 
       }; 
     }); 
   }    
@@ -60,17 +60,17 @@ export class FirebaseTodoDataSource {
       title: data.title,       
       completed: data.completed,       
       createdAt: data.createdAt.toDate(),       
-      userId: data.userId, // ← NUEVO 
+      userId: data.userId, // 
     }; 
   } 
  
-  // ← MODIFICADO: ahora recibe title y userId 
+  //  recibe title y userId 
   async createTodo(title: string, userId: string): Promise<Todo> {     
     const newTodo = {       
       title,       
       completed: false,       
       createdAt: Timestamp.now(),       
-      userId, // ← NUEVO: guardar el userId 
+      userId, // guardar el userId 
     };      
     
     const docRef = await addDoc(collection(db, this.collectionName), newTodo);      
@@ -80,7 +80,7 @@ export class FirebaseTodoDataSource {
       title,       
       completed: false,       
       createdAt: new Date(),       
-      userId, // ← NUEVO 
+      userId, // 
     };     
   }    
   

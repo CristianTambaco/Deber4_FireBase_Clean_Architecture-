@@ -22,7 +22,7 @@ export interface AuthRepository {
   onAuthStateChanged(callback: (user: User | null) => void): () => void; 
 
   
-  updateProfile(displayName: string): Promise<User>; // ← NUEVO
+  updateProfile(displayName: string): Promise<User>; // 
 
 
   sendPasswordReset(email: string): Promise<void>;

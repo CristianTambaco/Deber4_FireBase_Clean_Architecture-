@@ -3,13 +3,13 @@ export interface Todo {
     title: string;   
     completed: boolean;   
     createdAt: Date;   
-    userId: string; // ← NUEVO: ID del usuario dueño de esta tarea 
+    userId: string; // ID del usuario dueño de esta tarea 
 }  
 
 
 export interface CreateTodoDTO {   
     title: string;   
-    userId: string; // ← NUEVO: Requerido al crear una tarea 
+    userId: string; // Requerido al crear una tarea 
 }  
 
 
